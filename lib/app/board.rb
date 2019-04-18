@@ -14,7 +14,7 @@ class Board
     @case_8 = BoardCase.new(" ")
     @case_9 = BoardCase.new(" ")
 
-    # On met toutes les cases créés dans une array pour plus tard savoir la position de chacune des cases.
+    # On met toutes les cases créées dans une array pour plus tard savoir la position de chacune des cases.
     @board = [@case_1, @case_2, @case_3, @case_4, @case_5, @case_6, @case_7, @case_8, @case_9]
   end
 
@@ -32,23 +32,21 @@ class Board
 
   end
 
-  def play(array)
-    # array a cette forme : [x, x.value_player, place]
+  def play_turn(array)
+    # array a cette forme : [x, x.value_player, choice], où value_player est son symbole
     k = array[2] # L'index 2 la place entre 1 et 9 que le joueur a indiqué.
-    #if board[(k-1)].value = " " # On vérifie si la place indiqué par le joueur est bien vide. Sinon ca saute son tour.
       case
-      when array[1] == "X" # On regarde qu'elle est la couleur du pion du jour, ca correspond à l'index 1 de array.
-        @board[(k-1)].value = "X" # L'index d'un array commence à 0, donc on soustrait 1 à k pour que ca colle. Et on change la valeur du BoardCase.
+      when array[1] == "X" # on regarde quel est le pion du joueur, ca correspond à l'index 1 de array
+        @board[(k-1)].value = "X" # l'index d'un array commence à 0, donc on soustrait 1 à k. Et on change la valeur du BoardCase.
       when array[1] == "O"
         @board[(k-1)].value = "O"
       else
       end
-    #end
   end
 
-  def est_dispo?(place)
-    # Tant que la valeur de la place indiqué n'est pas un espace, on retourne false
-    unless @board[(place-1)].value == " "
+  def case_empty?(choice)
+    # Tant que la valeur de la place indiquée n'est pas vide, on retourne false
+    unless @board[(choice-1)].value == " "
       return false
     else
       return true
@@ -56,25 +54,36 @@ class Board
   end
 
   def victory?
-        # Pour qu'un joueur gagne il faut qu'il y est 3 valeurs identiques (X ou O) dans certaines cases.
-        # Il ne faut pas que la case soit vide aussi (c'est notre valeur par défaut).
+    # Méthode appelée dans fichier game (pour afficher message de fin)
+    
+    # Condition 1 = les 3 mêmes valeurs (X ou O), en horizontal, en vertical ou en diagonal
+    # Condition 2 = cases également non vides (valeurs au début de la partie)
+
+    # utilisation du case en remplacement de if/elsif (plus lisible)
     case
+
+      # les 3 mêmes valeurs en horizontal
       when @case_1.value == @case_2.value && @case_1.value == @case_3.value && @case_1.value != " " && @case_2.value != " " && @case_3.value != " "
         return true
       when @case_4.value == @case_5.value && @case_4.value == @case_6.value && @case_4.value != " " && @case_5.value != " " && @case_6.value != " "
         return true
       when @case_7.value == @case_8.value && @case_7.value == @case_9.value && @case_7.value != " " && @case_8.value != " " && @case_9.value != " "
         return true
+
+      # les 3 mêmes valeurs en vertical
       when @case_1.value == @case_4.value && @case_1.value == @case_7.value && @case_1.value != " " && @case_4.value != " " && @case_7.value != " "
         return true
       when @case_2.value == @case_5.value && @case_2.value == @case_8.value && @case_2.value != " " && @case_5.value != " " && @case_8.value != " "
         return true
       when @case_3.value == @case_6.value && @case_3.value == @case_9.value && @case_3.value != " " && @case_6.value != " " && @case_9.value != " "
         return true
+
+      # les 3 mêmes valeurs en diagonal
       when @case_1.value == @case_5.value && @case_1.value == @case_9.value && @case_1.value != " " && @case_5.value != " " && @case_9.value != " "
         return true
       when @case_3.value == @case_5.value && @case_3.value == @case_7.value && @case_3.value != " " && @case_5.value != " " && @case_5.value != " "
         return true
+
       else
         return false
     end

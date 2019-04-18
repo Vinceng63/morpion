@@ -36,47 +36,37 @@ class Game
 
   def turn
     
-    turns = 0 # On va incrémenter le nombre de tour. Il y a un total de 8 tours dans un jeu de Morpion
+    turns = 0 # on incrémente le nombre de tours
 
-    while turns < 9 # On répère le tour des jours jusqu'à ce que personne ne puisse jouer.
+    while turns < 9 # nombre de tours maximums d'une partie
 
-      @players.each{ |player| # On itère sur l'array des joueurs créé plus haut.
-      @board.display_board # On affiche le board pour que le joueur puisse prendre sa décision.
+      @players.each{ |player| # on itère sur l'array des joueurs, qui décident à tour de roles
+      @board.display_board # on affiche le board pour que le joueur puisse prendre sa décision
       puts "------------- Tour n°#{(turns + 1)} -------------"
       puts "#{player.name}, à toi de jouer ! (1 - 9)"
-      place = gets.chomp.to_i
+      choice = gets.chomp.to_i # choix du joueur
 
-        # while @board.est_dispo?(place) == false # Si la place est déjà occupé on relance la demande.
-        #   puts                                  # ce while est dans le précédent au cas ou le joueur veut rentrer autre chose qu'un Integer.
-        #   puts "La position renseigné est déjà occupée"
-        #   puts "Veuillez en choisir une nouvelle"
-        #   place = gets.chomp.to_i
-        # end
-        until place > 0 && place < 10 && @board.est_dispo?(place)
+      # doit être entre 1 et 9 + vérifier si case vide (cf. méthode dans classe board)
+      until choice > 0 && choice < 10 && @board.case_empty?(choice)             
+        puts "Mauvaise case ! Réessaie pour voir"
+        choice = gets.chomp.to_i # sinon on redemande un choix au joueur
+      end
 
-        #while @board.est_dispo?(place) == false # Si la place est déjà occupé on relance la demande.
-          puts                                  # ce while est dans le précédent au cas ou le joueur veut rentrer autre chose qu'un Integer.
-          puts "Mauvaise case ! Réessaie pour voir"
-          place = gets.chomp.to_i
-        end
-
-        
-
-      @info_player = [player, player.value_player, place]
-      @board.play(@info_player) # le @info_player est l'array que l'on envoie dans la méthode play de la Class Board.
+      @info_player = [player, player.value_player, choice]
+      @board.play_turn(@info_player) # le @info_player est l'array que l'on envoie dans la méthode play_turn de la Class Board
 
         if @board.victory? # A chaque tour on vérifie si le joueur a gagné
           puts "----------------------------------"
           puts ""
-          puts "          #{player.name} a gagné !         "
+          puts "     #{player.name} a gagné !     "
           puts ""
           puts "----------------------------------"
           break # on sort de la boucle each si c'est le joueur a gagné.
         end
 
-      turns += 1 # On incrémente turns ici
+      turns += 1 # on incrémente turns ici
 
-      if turns == 9 # on sort de la boucle each si turns arrive à 9 et on annonce le draw.
+      if turns == 9 # on sort de la boucle each si turns arrive à 9 et on annonce le match nul
         @board.display_board
         puts "---------------------------------"
         puts " " 
@@ -88,7 +78,7 @@ class Game
         if answer == "O"
           Game.new.go
         else
-          puts "Au revoir!"
+          puts "A la prochaine !"
         end
         break
       end
@@ -107,9 +97,9 @@ class Game
           if answer == "O"
             Game.new.go
           else
-            puts "Au revoir!"
+            puts "A la prochaine !"
           break
-          end # Si c'est le cas on sort de la boucle while
+          end # Si c'est le cas on sort de la boucle while, initiée au début de la méthode turn
         end
 
     end
